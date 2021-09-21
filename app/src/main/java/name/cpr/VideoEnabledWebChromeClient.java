@@ -128,58 +128,58 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
         if (view instanceof FrameLayout)
         {
             // A video wants to be shown
-            FrameLayout frameLayout = (FrameLayout) view;
-            View focusedChild = frameLayout.getFocusedChild();
-
+            this.videoViewContainer = (FrameLayout) view;
+            // View focusedChild = frameLayout.getFocusedChild();
             // Save video related variables
             this.isVideoFullscreen = true;
-            this.videoViewContainer = frameLayout;
             this.videoViewCallback = callback;
+            //FrameLayout decorView = ((FrameLayout) this.mActivity.getWindow().getDecorView());
 
             // Hide the non-video view, add the video view, and show it
+            //decorView.addView(videoViewContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             activityNonVideoView.setVisibility(View.INVISIBLE);
             activityVideoView.addView(videoViewContainer, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             activityVideoView.setVisibility(View.VISIBLE);
 
-            if (focusedChild instanceof android.widget.VideoView)
-            {
-                // android.widget.VideoView (typically API level <11)
-                android.widget.VideoView videoView = (android.widget.VideoView) focusedChild;
-
-                // Handle all the required events
-                videoView.setOnPreparedListener(this);
-                videoView.setOnCompletionListener(this);
-                videoView.setOnErrorListener(this);
-            }
-            else
-            {
-                // Other classes, including:
-                // - android.webkit.HTML5VideoFullScreen$VideoSurfaceView, which inherits from android.view.SurfaceView (typically API level 11-18)
-                // - android.webkit.HTML5VideoFullScreen$VideoTextureView, which inherits from android.view.TextureView (typically API level 11-18)
-                // - com.android.org.chromium.content.browser.ContentVideoView$VideoSurfaceView, which inherits from android.view.SurfaceView (typically API level 19+)
-
-                // Handle HTML5 video ended event only if the class is a SurfaceView
-                // Test case: TextureView of Sony Xperia T API level 16 doesn't work fullscreen when loading the javascript below
-                if (webView != null && webView.getSettings().getJavaScriptEnabled() && focusedChild instanceof SurfaceView)
-                {
-                    // Run javascript code that detects the video end and notifies the Javascript interface
-                    String js = "javascript:";
-                    js += "var _ytrp_html5_video_last;";
-                    js += "var _ytrp_html5_video = document.getElementsByTagName('video')[0];";
-                    js += "if (_ytrp_html5_video != undefined && _ytrp_html5_video != _ytrp_html5_video_last) {";
-                    {
-                        js += "_ytrp_html5_video_last = _ytrp_html5_video;";
-                        js += "function _ytrp_html5_video_ended() {";
-                        {
-                            js += "_VideoEnabledWebView.notifyVideoEnd();"; // Must match Javascript interface name and method of VideoEnableWebView
-                        }
-                        js += "}";
-                        js += "_ytrp_html5_video.addEventListener('ended', _ytrp_html5_video_ended);";
-                    }
-                    js += "}";
-                    webView.loadUrl(js);
-                }
-            }
+//            if (focusedChild instanceof android.widget.VideoView)
+//            {
+//                // android.widget.VideoView (typically API level <11)
+//                android.widget.VideoView videoView = (android.widget.VideoView) focusedChild;
+//
+//                // Handle all the required events
+//                videoView.setOnPreparedListener(this);
+//                videoView.setOnCompletionListener(this);
+//                videoView.setOnErrorListener(this);
+//            }
+//            else
+//            {
+//                // Other classes, including:
+//                // - android.webkit.HTML5VideoFullScreen$VideoSurfaceView, which inherits from android.view.SurfaceView (typically API level 11-18)
+//                // - android.webkit.HTML5VideoFullScreen$VideoTextureView, which inherits from android.view.TextureView (typically API level 11-18)
+//                // - com.android.org.chromium.content.browser.ContentVideoView$VideoSurfaceView, which inherits from android.view.SurfaceView (typically API level 19+)
+//
+//                // Handle HTML5 video ended event only if the class is a SurfaceView
+//                // Test case: TextureView of Sony Xperia T API level 16 doesn't work fullscreen when loading the javascript below
+//                if (webView != null && webView.getSettings().getJavaScriptEnabled() && focusedChild instanceof SurfaceView)
+//                {
+//                    // Run javascript code that detects the video end and notifies the Javascript interface
+//                    String js = "javascript:";
+//                    js += "var _ytrp_html5_video_last;";
+//                    js += "var _ytrp_html5_video = document.getElementsByTagName('video')[0];";
+//                    js += "if (_ytrp_html5_video != undefined && _ytrp_html5_video != _ytrp_html5_video_last) {";
+//                    {
+//                        js += "_ytrp_html5_video_last = _ytrp_html5_video;";
+//                        js += "function _ytrp_html5_video_ended() {";
+//                        {
+//                            js += "_VideoEnabledWebView.notifyVideoEnd();"; // Must match Javascript interface name and method of VideoEnableWebView
+//                        }
+//                        js += "}";
+//                        js += "_ytrp_html5_video.addEventListener('ended', _ytrp_html5_video_ended);";
+//                    }
+//                    js += "}";
+//                    webView.loadUrl(js);
+//                }
+//            }
 
             // Notify full-screen change
             if (toggledFullscreenCallback != null)
@@ -189,11 +189,11 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
         }
     }
 
-    @Override @SuppressWarnings("deprecation")
-    public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) // Available in API level 14+, deprecated in API level 18+
-    {
-        onShowCustomView(view, callback);
-    }
+//    @Override @SuppressWarnings("deprecation")
+//    public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) // Available in API level 14+, deprecated in API level 18+
+//    {
+//        onShowCustomView(view, callback);
+//    }
 
     @Override
     public void onHideCustomView()
@@ -207,6 +207,7 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
             activityVideoView.setVisibility(View.INVISIBLE);
             activityVideoView.removeView(videoViewContainer);
             activityNonVideoView.setVisibility(View.VISIBLE);
+            //((FrameLayout) this.mActivity.getWindow().getDecorView()).removeView(videoViewContainer);
 
             // Call back (only in API level <19, because in API level 19+ with chromium webview it crashes)
             if (videoViewCallback != null && !videoViewCallback.getClass().getName().contains(".chromium."))
@@ -241,42 +242,17 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
         }
     }
 
-    @Override
-    public void onPrepared(MediaPlayer mp) // Video will start playing, only called in the case of android.widget.VideoView (typically API level <11)
-    {
-        if (loadingView != null)
-        {
-            loadingView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) // Video finished playing, only called in the case of android.widget.VideoView (typically API level <11)
-    {
-        onHideCustomView();
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) // Error while playing video, only called in the case of android.widget.VideoView (typically API level <11)
-    {
-        return false; // By returning false, onCompletion() will be called
-    }
-
     /**
      * Notifies the class that the back key has been pressed by the user.
      * This must be called from the Activity's onBackPressed(), and if it returns false, the activity itself should handle it. Otherwise don't do anything.
      * @return Returns true if the event was handled, and false if was not (video view is not visible)
      */
     @SuppressWarnings("unused")
-    public boolean onBackPressed()
-    {
-        if (isVideoFullscreen)
-        {
+    public boolean onBackPressed() {
+        if (isVideoFullscreen) {
             onHideCustomView();
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
