@@ -1,5 +1,6 @@
 package name.cpr;
 
+import android.app.Activity;
 import android.media.MediaPlayer;
 import android.view.SurfaceView;
 import android.view.View;
@@ -24,13 +25,14 @@ import android.widget.FrameLayout;
  * @author Cristian Perez (http://cpr.name)
  *
  */
-public class VideoEnabledWebChromeClient extends WebChromeClient implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener
+public class VideoEnabledWebChromeClient extends WebChromeClient
 {
     public interface ToggledFullscreenCallback
     {
         public void toggledFullscreen(boolean fullscreen);
     }
 
+    private Activity mActivity;
     private View activityNonVideoView;
     private ViewGroup activityVideoView;
     private View loadingView;
@@ -42,45 +44,45 @@ public class VideoEnabledWebChromeClient extends WebChromeClient implements Medi
 
     private ToggledFullscreenCallback toggledFullscreenCallback;
 
-    /**
-     * Never use this constructor alone.
-     * This constructor allows this class to be defined as an inline inner class in which the user can override methods
-     */
-    @SuppressWarnings("unused")
-    public VideoEnabledWebChromeClient()
-    {
-    }
+//    /**
+//     * Never use this constructor alone.
+//     * This constructor allows this class to be defined as an inline inner class in which the user can override methods
+//     */
+//    @SuppressWarnings("unused")
+//    public VideoEnabledWebChromeClient()
+//    {
+//    }
 
-    /**
-     * Builds a video enabled WebChromeClient.
-     * @param activityNonVideoView A View in the activity's layout that contains every other view that should be hidden when the video goes full-screen.
-     * @param activityVideoView A ViewGroup in the activity's layout that will display the video. Typically you would like this to fill the whole layout.
-     */
-    @SuppressWarnings("unused")
-    public VideoEnabledWebChromeClient(View activityNonVideoView, ViewGroup activityVideoView)
-    {
-        this.activityNonVideoView = activityNonVideoView;
-        this.activityVideoView = activityVideoView;
-        this.loadingView = null;
-        this.webView = null;
-        this.isVideoFullscreen = false;
-    }
+//    /**
+//     * Builds a video enabled WebChromeClient.
+//     * @param activityNonVideoView A View in the activity's layout that contains every other view that should be hidden when the video goes full-screen.
+//     * @param activityVideoView A ViewGroup in the activity's layout that will display the video. Typically you would like this to fill the whole layout.
+//     */
+//    @SuppressWarnings("unused")
+//    public VideoEnabledWebChromeClient(View activityNonVideoView, ViewGroup activityVideoView)
+//    {
+//        this.activityNonVideoView = activityNonVideoView;
+//        this.activityVideoView = activityVideoView;
+//        this.loadingView = null;
+//        this.webView = null;
+//        this.isVideoFullscreen = false;
+//    }
 
-    /**
-     * Builds a video enabled WebChromeClient.
-     * @param activityNonVideoView A View in the activity's layout that contains every other view that should be hidden when the video goes full-screen.
-     * @param activityVideoView A ViewGroup in the activity's layout that will display the video. Typically you would like this to fill the whole layout.
-     * @param loadingView A View to be shown while the video is loading (typically only used in API level <11). Must be already inflated and not attached to a parent view.
-     */
-    @SuppressWarnings("unused")
-    public VideoEnabledWebChromeClient(View activityNonVideoView, ViewGroup activityVideoView, View loadingView)
-    {
-        this.activityNonVideoView = activityNonVideoView;
-        this.activityVideoView = activityVideoView;
-        this.loadingView = loadingView;
-        this.webView = null;
-        this.isVideoFullscreen = false;
-    }
+//    /**
+//     * Builds a video enabled WebChromeClient.
+//     * @param activityNonVideoView A View in the activity's layout that contains every other view that should be hidden when the video goes full-screen.
+//     * @param activityVideoView A ViewGroup in the activity's layout that will display the video. Typically you would like this to fill the whole layout.
+//     * @param loadingView A View to be shown while the video is loading (typically only used in API level <11). Must be already inflated and not attached to a parent view.
+//     */
+//    @SuppressWarnings("unused")
+//    public VideoEnabledWebChromeClient(View activityNonVideoView, ViewGroup activityVideoView, View loadingView)
+//    {
+//        this.activityNonVideoView = activityNonVideoView;
+//        this.activityVideoView = activityVideoView;
+//        this.loadingView = loadingView;
+//        this.webView = null;
+//        this.isVideoFullscreen = false;
+//    }
 
     /**
      * Builds a video enabled WebChromeClient.
@@ -91,8 +93,9 @@ public class VideoEnabledWebChromeClient extends WebChromeClient implements Medi
      * Note: The web page must only contain one video tag in order for the HTML5 video ended event to work. This could be improved if needed (see Javascript code).
      */
     @SuppressWarnings("unused")
-    public VideoEnabledWebChromeClient(View activityNonVideoView, ViewGroup activityVideoView, View loadingView, VideoEnabledWebView webView)
+    public VideoEnabledWebChromeClient(Activity activity, View activityNonVideoView, ViewGroup activityVideoView, View loadingView, VideoEnabledWebView webView)
     {
+        this.mActivity = activity;
         this.activityNonVideoView = activityNonVideoView;
         this.activityVideoView = activityVideoView;
         this.loadingView = loadingView;

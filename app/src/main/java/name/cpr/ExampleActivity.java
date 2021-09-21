@@ -1,10 +1,13 @@
 package name.cpr;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -15,6 +18,7 @@ public class ExampleActivity extends ActionBarActivity
     private VideoEnabledWebView webView;
     private VideoEnabledWebChromeClient webChromeClient;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -29,7 +33,7 @@ public class ExampleActivity extends ActionBarActivity
         ViewGroup videoLayout = (ViewGroup)findViewById(R.id.videoLayout); // Your own view, read class comments
         //noinspection all
         View loadingView = getLayoutInflater().inflate(R.layout.view_loading_video, null); // Your own view, read class comments
-        webChromeClient = new VideoEnabledWebChromeClient(nonVideoLayout, videoLayout, loadingView, webView) // See all available constructors...
+        webChromeClient = new VideoEnabledWebChromeClient(this, nonVideoLayout, videoLayout, loadingView, webView) // See all available constructors...
         {
             // Subscribe to standard events, such as onProgressChanged()...
             @Override
@@ -68,12 +72,21 @@ public class ExampleActivity extends ActionBarActivity
                         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                     }
                 }
-
             }
         });
         webView.setWebChromeClient(webChromeClient);
         // Call private class InsideWebViewClient
         webView.setWebViewClient(new InsideWebViewClient());
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+//        webView.getSettings().setSupportMultipleWindows(true);
+//        webView.getSettings().setEnableSmoothTransition(true);
+        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        WebView.setWebContentsDebuggingEnabled(true);
+//        webView.getSettings().setLoadWithOverviewMode(true);
+//        webView.getSettings().setUseWideViewPort(true);
         
         // Navigate anywhere you want, but consider that this classes have only been tested on YouTube's mobile site
         webView.loadUrl("http://m.youtube.com");
