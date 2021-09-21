@@ -1,12 +1,15 @@
 package name.cpr;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
+
+import java.lang.ref.WeakReference;
 
 /**
  * This class serves as a WebChromeClient to be set to a WebView, allowing it to play video.
@@ -32,7 +35,7 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
         public void toggledFullscreen(boolean fullscreen);
     }
 
-    private Activity mActivity;
+    private WeakReference<Activity> mActivityRef;
     private View activityNonVideoView;
     private ViewGroup activityVideoView;
     private View loadingView;
@@ -95,7 +98,7 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
     @SuppressWarnings("unused")
     public VideoEnabledWebChromeClient(Activity activity, View activityNonVideoView, ViewGroup activityVideoView, View loadingView, VideoEnabledWebView webView)
     {
-        this.mActivity = activity;
+        this.mActivityRef = new WeakReference(activity);
         this.activityNonVideoView = activityNonVideoView;
         this.activityVideoView = activityVideoView;
         this.loadingView = loadingView;
@@ -182,6 +185,10 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
 //            }
 
             // Notify full-screen change
+            Activity activity = this.mActivityRef.get();
+            if(activity != null) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
             if (toggledFullscreenCallback != null)
             {
                 toggledFullscreenCallback.toggledFullscreen(true);
@@ -220,6 +227,10 @@ public class VideoEnabledWebChromeClient extends WebChromeClient
             videoViewContainer = null;
             videoViewCallback = null;
 
+            Activity activity = this.mActivityRef.get();
+            if(activity != null) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
             // Notify full-screen change
             if (toggledFullscreenCallback != null)
             {
